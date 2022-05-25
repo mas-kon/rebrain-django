@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 from .models import *
 import logging
@@ -28,14 +29,19 @@ class ClientSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         disks_data = validated_data.pop('disk')
         net_adapter_data = validated_data.pop('adapter')
-        # print(validated_data['name'])
-        client = Client.objects.create(**validated_data)
+        print(validated_data['name'])
+        try:
+            Client.objects.get(name=validated_data['name'])
+        except ObjectDoesNotExist:
+            client = Client.objects.create(**validated_data)
+            for disk_data in disks_data:
+                Disks.objects.create(client=client, **disk_data)
 
-        for disk_data in disks_data:
-            Disks.objects.create(client=client, **disk_data)
+            for adapter_data in net_adapter_data:
+                NetAdapter.objects.create(client=client, **adapter_data)
+        finally:
+            client = Client.objects.get(name=validated_data['name'])
 
-        for adapter_data in net_adapter_data:
-            NetAdapter.objects.create(client=client, **adapter_data)
         return client
 
     def update(self, instance, validated_data):

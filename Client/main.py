@@ -206,8 +206,8 @@ class PcClient:
                              'load_average_5min': self.load_avg_dict['5min'],
                              'load_average_15min': self.load_avg_dict['15min'],
                              'client_is_active': True,
-                             'disk': self.disk_dict,
-                             'adapter': self.network_dict
+                             'disks': self.disk_dict,
+                             'net_adapter': self.network_dict
                              }
 
         # print(self.cpu_dict)
@@ -224,11 +224,12 @@ def main():
     host = socket.gethostname().split('.')[0]
     registration_id = 0
     log_write('Starting program', 'info')
+    current_pc = PcClient(host)
+    inf = current_pc()
+    log_write(inf, 'info')
 
     while True:
-        current_pc = PcClient(host)
         inf = current_pc()
-        log_write(inf, 'info')
         # print(json.dumps(inf, indent = 4, ensure_ascii=False))
         enc_json = json.JSONEncoder().encode(inf)
         server_url_add = 'http://127.0.0.1:8000/api/clients/add'
@@ -240,7 +241,7 @@ def main():
                     decrypt_json = json.JSONDecoder().decode(req_add['data'])
                     registration_id = decrypt_json['id']
                     log_write(
-                        f"Connection to {server_url_add} for {inf['name']} with ID {registration_id} was successfully. ",
+                        f"Connection to {server_url_add} for {inf['name']} with ID {registration_id} was successfully.",
                         'info')
             else:
                 log_write(f"Can\'t add record for {inf['name']}. See above.", 'error')

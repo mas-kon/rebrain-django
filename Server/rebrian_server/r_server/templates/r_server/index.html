@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% load my_tags %}
+
+{% block title %}
+    {{ title }} :: {{ block.super }}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'inc/_sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+
+    {% get_all_clients as clients %}
+    {% for client in clients %}
+        <div class="card mb-3" style="width: 100%;">
+            <div class="card-header">
+                {{ forloop.counter }} Клиент: {{ client.name }}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Description: <b>{{ client.description }}</b></h5>
+                <p class="card-text">Num of CPU cores: <b>{{ client.cpu_physical_cores }}</b></p>
+                <p class="card-text">Frequency CPU: <b>{{ client.cpu_frequency_max }}</b></p>
+
+                <a href="{{ client.get_absolute_url }}" class="btn btn-primary">Read more...</a>
+            </div>
+            <div class="card-footer text-muted">
+                Date add: <b>{{ client.date_add | date:"Y-m-d H:i" }}</b>
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock %}

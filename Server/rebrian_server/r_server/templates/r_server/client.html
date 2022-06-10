@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% load my_tags %}
+
+{% block title %}
+    {{ client_item.name }} :: {{ block.super }}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'inc/_sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="card-body">
+        <h5 class="card-title">Description: <b>{{ client_item.description }}</b></h5>
+        <p class="card-text">Num of CPU cores: <b>{{ client_item.cpu_physical_cores }}</b></p>
+        <p class="card-text">Frequency CPU: <b>{{ client_item.cpu_frequency_max }}</b></p>
+        {% for disk in client_item.disks %}
+            <p class="card-text {% cycle 'text-danger' 'text-success' %}">Disk: <b>{{ disk.device }}
+                - {{ disk.total|filesizeformat }}</b></p>
+        {% empty %}
+            No disks.
+        {% endfor %}
+        {% for adapter in client_item.net_adapter %}
+            {% if adapter.IPv4 is not None and  adapter.IPv4 != '127.0.0.1' %}
+                <p class="card-text">Net: <b>{{ adapter.net_adapter_device }} - {{ adapter.IPv4 }}</b></p>
+            {% endif %}
+        {% empty %}
+            No network adapter.
+        {% endfor %}
+    </div>
+
+{% endblock %}

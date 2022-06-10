@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class Client(models.Model):
@@ -20,9 +21,12 @@ class Client(models.Model):
     disks = models.JSONField(verbose_name='Disks')
     net_adapter = models.JSONField(verbose_name='Net Adapters')
 
-    class Meta:
-        managed = True
-        verbose_name = 'Client'
+    def get_absolute_url(self):
+        return reverse('get_client', kwargs={"client_id": self.pk})
 
     def __str__(self):
         return '%s - %s - %s' % (self.name, self.memory_total, self.cpu_frequency_max)
+
+    class Meta:
+        managed = True
+        verbose_name = 'Client'

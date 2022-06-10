@@ -1,0 +1,13 @@
+{% load my_tags %}
+{% get_all_clients as clients %}
+<div class="list-group">
+    {% for client in clients %}
+        {# {{ client.id }} #}
+        {% if client.get_current_id == client.id %}
+            <a href="{{ client.get_absolute_url }}" class="list-group-item list-group-item-action active"
+               aria-current="true">{{ client.name }}</a>
+        {% else %}
+            <a href="{{ client.get_absolute_url }}" class="list-group-item list-group-item-action">{{ client.name }}</a>
+        {% endif %}
+    {% endfor %}
+</div>
